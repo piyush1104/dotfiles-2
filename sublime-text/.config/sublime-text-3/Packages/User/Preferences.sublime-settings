@@ -37,7 +37,7 @@
 		}
 	],
 	"auto_find_in_selection": true,
-	"color_scheme": "Packages/Theme - Nil/Tubnil_mod.tmTheme",
+	"color_scheme": "Packages/Theme - Nil/Tubnil.tmTheme",
 	"dictionary": "Packages/Language - English_user/en_US.dic",
 	"drag_text": true,
 	"ensure_newline_at_eof_on_save": true,
