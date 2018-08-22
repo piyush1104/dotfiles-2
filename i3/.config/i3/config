@@ -196,7 +196,7 @@ bindsym $mod+r mode "resize"
 bar {
     position top
     tray_output primary
-    status_command i3status
+    status_command i3blocks
     separator_symbol "||"
 }
 
@@ -208,9 +208,9 @@ bindsym --whole-window $mod+button2 floating toggle
 
 # volume
 set $volume_step 5%
-bindsym XF86AudioRaiseVolume exec --no-startup-id amixer set Master $volume_step+
-bindsym XF86AudioLowerVolume exec --no-startup-id amixer set Master $volume_step-
-bindsym XF86AudioMute exec --no-startup-id amixer set Master toggle
+bindsym XF86AudioRaiseVolume exec --no-startup-id amixer set Master $volume_step+ && pkill -RTMIN+10 i3blocks
+bindsym XF86AudioLowerVolume exec --no-startup-id amixer set Master $volume_step- && pkill -RTMIN+10 i3blocks
+bindsym XF86AudioMute exec --no-startup-id amixer set Master toggle && pkill -RTMIN+10 i3blocks
 
 # media keys for foobar (needs stdout redirect, doesn't start otherwise)
 bindsym XF86AudioPrev exec --no-startup-id mpc prev
