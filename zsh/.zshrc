@@ -108,3 +108,9 @@ export AUR_PAGER="ranger --cmd aur"
 
 # Load file with confidential information
 source ~/.zshrc-private
+
+# prepend miniconda path
+miniconda() {
+    export PATH="$HOME"/miniconda3/bin:$PATH
+    source activate dl4nlp
+}
