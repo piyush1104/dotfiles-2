@@ -1,6 +1,8 @@
-
-# pls
-alias pls='sudo !!'
+# random
+alias pls='sudo $(fc -ln -1)'
+alias ipy='ipython'
+alias sudo='killall screenkey 2>/dev/null; sudo'
+alias lrc='source ~/.zshrc'
 
 # ls: exa
 alias ls='exa --time-style=long-iso'
@@ -175,6 +177,10 @@ alias nanaone="mpv https://live1.brb.re:8082/html5/hls/nanaone.m3u8"
 alias nanaone2="mpv rtmp://live1.brb.re/live/nanaone_720p"
 alias yt_favs="mpa 'https://www.youtube.com/playlist?list=PLbVK3lh2yB7RznbL1IUeA7PYXE9YL11oR'"
 
+beet_mpa () {
+    beet list $@ -f'$path' | xargs -d'\n' mpv --profile=audio
+}
+
 
 # check for and perform system updates
 cu () {
@@ -226,6 +232,11 @@ alias wine32='env WINEARCH=win32 WINEPREFIX="$HOME/.wine32" wine'
 alias winecfg32='env WINEARCH=win32 WINEPREFIX="$HOME/.wine32" winecfg'
 alias winetricks32='env WINEARCH=win32 WINEPREFIX="$HOME/.wine32" winetricks'
 
+alias wine_games_env='export WINEARCH=win32; export WINEPREFIX="$HOME/.wine32_games"'
+alias wine_games='env WINEARCH=win32 WINEPREFIX="$HOME/.wine32_games" wine'
+alias winecfg_games='env WINEARCH=win32 WINEPREFIX="$HOME/.wine32_games" winecfg'
+alias winetricks_games='env WINEARCH=win32 WINEPREFIX="$HOME/.wine32_games" winetricks'
+
 alias wine_tmp='env WINEPREFIX="$HOME/.wine_tmp" wine'
 alias winecfg_tmp='env WINEPREFIX="$HOME/.wine_tmp" winecfg'
 alias winetricks_tmp='env WINEPREFIX="$HOME/.wine_tmp" winetricks'
@@ -237,6 +248,8 @@ alias venv="source .venv/bin/activate"
 function npm-do {
     (PATH=$(npm bin):$PATH; eval $@;)
 }
+
+alias aurb="aur build -d custom"
 
 
 # utilities
@@ -252,4 +265,16 @@ flasher() {
         printf "\\e[?5l"
         read -s -k1 -t1 && break
     done;
+}
+
+cheat() {
+    # https://github.com/chubin/cheat.sh
+    # `cheat tool` or `cheat language/term+with+pluses[/1..]` (append number for next result)
+    # ?Q to strip comments, ?T to strip syntax hl, …
+    curl cht.sh/"$@"
+}
+
+mkvattachments() {
+    infile="$1"; shift
+    ffmpeg -i "$infile" -dump_attachment:t "" -i $@
 }

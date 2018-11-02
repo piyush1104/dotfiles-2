@@ -3,6 +3,7 @@
 # Please see http://i3wm.org/docs/userguide.html for a complete reference!
 
 set $mod Mod4
+set $alt Mod1
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
@@ -235,6 +236,9 @@ for_window [class="Deluge"] floating enable
 for_window [class="Pinentry"] floating enable
 for_window [class="Pavucontrol"] floating enable
 for_window [class="cool-retro-term"] fullscreen enable
+for_window [class="key-mon"] floating enable
+for_window [class="Steam" title="Steam - News"] floating enable
+for_window [class="lxqt-openssh-askpass"] floating enable
 
 # add border for border-less gtk3 applications
 for_window [class="Evince|Nautilus|File-roller|Baobab"] border pixel 2
@@ -262,13 +266,21 @@ bindsym Shift+Print exec teiler --quick video area
 bindsym Ctrl+Print exec teiler --quick image area
 
 # color picker
-bindsym $mod+Ctrl+c exec gcolor2
+bindsym $mod+$alt+c exec gcolor2
 
 # mpv with url in clipboard
 bindsym $mod+m exec "mpv -- \\"`xsel -ob`\\""
 # share files (or clipboard contents) by uploading them and replacing clipboard with the url
 # Prior = page up / Next = page down
 bindsym $mod+Next exec share_clip
+
+# compton
+bindsym $mod+Ctrl+c exec compton
+bindsym $mod+Ctrl+Shift+c exec killall compton
+
+# screenkey
+bindsym $mod+Ctrl+s exec screenkey
+bindsym $mod+Ctrl+Shift+s exec killall screenkey
 
 
 # Press $mod+o followed by a letter to run applications
@@ -278,7 +290,7 @@ bindsym $mod+o mode "$mode_launcher"
 mode "$mode_launcher" {
     set $to_default mode "default"
     bindsym a       exec aegisub, $to_default
-    bindsym d       exec discord-canary, $to_default
+    bindsym d       exec discord, $to_default
     bindsym f       exec firefox, $to_default
     # needs stdout redirect, doesn't start otherwise
     bindsym Shift+f exec foobar >/dev/null, $to_default
@@ -296,8 +308,7 @@ mode "$mode_launcher" {
 
 
 # Initial startup #
-# https://github.com/chjj/compton/issues/477
-exec --no-startup-id allow_rgb10_configs=false compton
+exec --no-startup-id compton
 exec --no-startup-id parcellite
 exec --no-startup-id fcitx
 # to circumvent fcitx workaround (https://github.com/fcitx/fcitx/issues/324)

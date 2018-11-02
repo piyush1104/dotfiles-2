@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.6
+#!/usr/bin/env python3
 
 """Merge multiple QC documents, as created by kSub and mpvQC, into one.
 
@@ -23,7 +23,7 @@ l = logging.getLogger(__name__)
 QCLine = namedtuple('QCLine', 'line source')
 
 
-def extract_qc_lines(f: io.TextIOWrapper) -> Generator[str]:
+def extract_qc_lines(f: io.TextIOWrapper) -> Generator[str, None, None]:
     line_iter = iter(f)
 
     # go to data section
