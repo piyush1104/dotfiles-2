@@ -110,9 +110,3 @@ export AUR_REPO="aur"  # default for aur packages
 
 # Load file with confidential information
 [[ -e $HOME/.zshrc-private ]] && source ~/.zshrc-private
-
-# prepend miniconda path
-miniconda() {
-    export PATH="$HOME"/miniconda3/bin:$PATH
-    source activate dl4nlp
-}
