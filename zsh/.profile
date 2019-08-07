@@ -1,6 +1,6 @@
 # default applications
-export TERMINAL=termite
-# export TERM=alacritty
+export TERMINAL=alacritty
+export TERM=alacritty
 export EDITOR=vim  # "subl -nw"
 export PAGER=less
 
