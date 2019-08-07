@@ -1,9 +1,13 @@
 # random
 alias pls='sudo $(fc -ln -1)'
 alias ipy='ipython'
-alias sudo='killall screenkey 2>/dev/null; sudo'
+# alias sudo='killall screenkey 2>/dev/null; sudo'
 alias lrc='source ~/.zshrc'
 alias rm='rm -i'
+alias dragon="dragon-drag-and-drop"
+
+# Needed when ssh-ing to servers without my terminal's terminfo (alacritty and termite)
+alias ssh="TERM=xterm-256color ssh"
 
 # ls: exa
 alias ls='exa --time-style=long-iso'
@@ -174,8 +178,9 @@ twitch() {
     mpv $@ -- "https://twitch.tv/$channel"
 }
 
-alias nanaone="mpv https://live1.brb.re:8082/html5/hls/nanaone.m3u8"
+alias nanaone="mpv https://live1.brb.re:8082/html5/hls/nanaone.m3u8" # 30s delay
 alias nanaone2="mpv rtmp://live1.brb.re/live/nanaone_720p"
+alias nanaone3="mpv rtmp://live2.brb.re/live/nanaone"
 alias yt_favs="mpa 'https://www.youtube.com/playlist?list=PLbVK3lh2yB7RznbL1IUeA7PYXE9YL11oR'"
 
 beet_mpa () {
@@ -187,7 +192,7 @@ beet_mpa () {
 cu () {
     checkupdates
     echo ''
-    aur vercmp -d aur
+    aur repo -ld aur | aur vercmp
 }
 
 cu2 () {
@@ -201,7 +206,7 @@ cu2 () {
     local vcs_info
     mktemp | read -r vcs_info
     aur srcver ~/.cache/aurutils/sync/*-git > "$vcs_info"
-    aur vercmp -d custom -p "$vcs_info"
+    aur vercmp -d aur -p "$vcs_info"
     rm "$vcs_info"
 }
 
@@ -214,17 +219,17 @@ Syu () {
     # links "https://bbs.archlinux.org/viewforum.php?id=44"
 
     # the actual upgrade
-    sudo pacman -Syu
+    sudo pacman -Syu $@
 
     # print remaining outdated packages
     printf -- "\n"
-    aur vercmp -d aur
+    aur repo -ld aur | aur vercmp
     # cu
 }
 
 
 # systemd aliases
-alias sc='systemctl'
+alias sc='sudo systemctl'
 alias scu='systemctl --user'
 alias jc='journalctl'
 alias jcu='journalctl --user'
@@ -278,7 +283,35 @@ cheat() {
     curl cht.sh/"$@"
 }
 
+how_in() {
+  where="$1"; shift
+  IFS=+ curl "https://cht\.sh/$where/$*"
+}
+
 mkvattachments() {
     infile="$1"; shift
     ffmpeg -i "$infile" -dump_attachment:t "" -i $@
+}
+
+wttr() {
+    local request="https://wttr.in/${1-$_WTTR}?mQF"
+    [ "$COLUMNS" -lt 125 ] && request+='n'
+    # ${LANG%_*}
+    curl -H "Accept-Language: de,en" --compressed "$request"
+}
+
+copympd() {
+    local source target
+    source=/data/audio/music/"$(mpc -f '%file%' current)"
+    if [[ "$source" == "${source%.*}".flac ]]; then
+        target="/tmp/$(basename "${source%.*}").ogg"
+        echo "converting to .ogg…"
+        ffmpeg -v warning -i "$source" -acodec libopus -b:a 128k -vbr on -compression_level 10 -vn "$target"
+    else
+        target="$source"
+    fi
+    echo -n "$target" | xsel -b
+    xclip-copyfile "$target"
+    notify-send "copied: $(basename "$target")"
+    # dragon "$target" --and-exit &
 }

@@ -31,8 +31,8 @@ unset sources src
 
 
 # termite: Launch new terminal in current dir
-if [[ $TERM == xterm-termite ]]; then
-  . /etc/profile.d/vte.sh
+if [[ $TERM == xterm-termite && -e /etc/profile.d/vte.sh ]]; then
+  source /etc/profile.d/vte.sh
   __vte_osc7
 fi
 
@@ -40,7 +40,7 @@ fi
 # use zsh's run-help (<M-h> to invoke on current line)
 # (( ${+aliases[run-help]} )) && unalias run-help
 alias run-help >&/dev/null && unalias run-help
-for rh in run-help{,-git,-openssl,-sudo}; do
+for rh in run-help{,-git,-openssl,-sudo,-aur}; do
     autoload -Uz $rh
 done; unset rh
 alias help=run-help

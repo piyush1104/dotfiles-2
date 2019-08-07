@@ -6,6 +6,16 @@
 ;
 ;==========================================================
 
+
+[settings]
+screenchange-reload = true
+
+
+[global/wm]
+margin-top = 6
+margin-bottom = 5
+
+
 [colors]
 ;background = ${xrdb:color0:#222}
 background = #222
@@ -24,6 +34,8 @@ alert = #bd2c40
 cpu = #950095
 memory = #4bffdc
 gpu = #8B4500
+network = #10831E
+
 
 [bar/base]
 width = 100%
@@ -54,25 +66,27 @@ module-padding = 3
 # https://fontawesome.com/cheatsheet
 # https://material.io/tools/icons/
 font-0 = Operator Mono Medium:size=11;2
+# font-1 = Font Awesome 5 Pro:style=Solid:size=10;2
 font-1 = Font Awesome 5 Free:style=Solid:size=10;2
 font-2 = Font Awesome 5 Free:size=10;2
 font-3 = Material Icons:size=10;2
-font-4 = Symbola:size=10;2
+font-4 = WeatherIcons-Regular:size=10.5;2
+font-5 = Symbola:size=10;2
 # Need some CJK characters
-font-5 = M+ 2m:size=10;2
-
+font-6 = M+ 2m:size=10;2
 
 # override-redirect = true
 # wm-restack = i3
 
+
 [bar/primary]
 inherit = bar/base
-# monitor = ${env:MONITOR:HDMI-A-0}
-monitor = HDMI-A-0
+monitor = ${env:MONITOR:HDMI-A-0}
+# monitor = HDMI-A-0
 
 modules-left = i3 xwindow
-modules-center = date
-modules-right = compton updates filesystem memory cpu_usage cpu_load cpu_temperature gpu_usage gpu_temperature eth pulseaudio
+modules-center = date wttr
+modules-right = compton updates filesystem memory cpu_usage cpu_load cpu_temperature eth pulseaudio
 
 tray-position = right
 # tray-background = #0063ff
@@ -80,9 +94,10 @@ tray-position = right
 cursor-click = pointer
 cursor-scroll = ns-resize
 
+
 [bar/secondary]
 inherit = bar/base
-monitor = DVI-I-1
+monitor = ${env:MONITOR_2:DVI-I-1}
 
 modules-left = i3 xwindow
 modules-center = date
@@ -93,6 +108,7 @@ modules-right = mpd pulseaudio
 type = internal/xwindow
 label = %title:0:90:…%
 format-underline = ${colors.secondary}
+
 
 [module/filesystem]
 type = internal/fs
@@ -105,6 +121,7 @@ mount-2 = /mnt/sekai
 label-mounted = %{F#0a81f5}%mountpoint%%{F-}: %free:1%
 label-unmounted = %mountpoint%
 label-unmounted-foreground = ${colors.foreground-alt}
+
 
 [module/i3]
 type = internal/i3
@@ -181,17 +198,19 @@ icon-consume = ✀
 label-song-maxlen = 80
 label-song-ellipsis = true
 
+
 [module/xbacklight]
 type = internal/xbacklight
-
 # TODO
 format = <ramp> %level%
 label = BL
+
 
 [module/backlight-acpi]
 inherit = module/xbacklight
 type = internal/backlight
 card = intel_backlight
+
 
 [module/cpu_usage]
 type = internal/cpu
@@ -201,6 +220,7 @@ format-prefix-foreground = ${colors.prefix}
 format-underline = #950095
 label = %percentage:2%%
 
+
 [module/memory]
 type = internal/memory
 interval = 2
@@ -209,19 +229,20 @@ format-prefix-foreground = ${colors.prefix}
 format-underline = ${colors.memory}
 label = %percentage_used%%
 
+
 [module/wlan]
 # TODO
 type = internal/network
 interface = net1
-interval = 3.0
+interval = 5.0
 
 format-connected = <ramp-signal> <label-connected>
-format-connected-underline = #9f78e1
-label-connected = %essid%
+label-connected = %essid% %{F#555}%{F-} %downspeed:8% %{F#555}%{F-} %upspeed:8%
+format-connected-underline = ${colors.network}
 
 format-disconnected =
 ;format-disconnected = <label-disconnected>
-;format-disconnected-underline = ${self.format-connected-underline}
+format-disconnected-underline = ${colors.warning}
 ;label-disconnected = %ifname% disconnected
 ;label-disconnected-foreground = ${colors.foreground-alt}
 ramp-signal-0 = 
@@ -231,6 +252,7 @@ ramp-signal-3 = 
 ramp-signal-4 = 
 ramp-signal-foreground = ${colors.foreground-alt}
 
+
 [module/eth]
 type = internal/network
 interface = eno1
@@ -239,7 +261,8 @@ interval = 5.0
 # format-connected-underline = #55aa55
 format-connected-prefix = " "
 format-connected-prefix-foreground = ${colors.prefix}
-label-connected = %local_ip%
+label-connected = %local_ip% %{F#555}%{F-} %downspeed:8% %{F#555}%{F-} %upspeed:8%
+format-connected-underline = ${colors.network}
 
 format-disconnected = <label-disconnected>
 format-disconnected-underline = ${colors.warning}
@@ -247,6 +270,7 @@ format-disconnected-prefix = " "
 format-disconnected-prefix-foreground = ${colors.prefix}
 label-disconnected = %ifname%
 label-disconnected-foreground = ${colors.foreground-alt}
+
 
 [module/date]
 type = custom/script
@@ -258,6 +282,7 @@ format-prefix-foreground = ${colors.prefix}
 # format-underline = ${colors.secondary}
 
 click-left = ~/.config/polybar/scripts/polyyad.py --calendar --undecorated --fixed --close-on-unfocus --no-buttons --width=250 &
+
 
 [module/pulseaudio]
 type = internal/pulseaudio
@@ -278,6 +303,7 @@ ramp-volume-foreground = ${colors.foreground-alt}
 # ramp-volume-0 = 🔈
 # ramp-volume-1 = 🔉
 # ramp-volume-2 = 🔊
+
 
 [module/battery]
 # TODO
@@ -313,6 +339,7 @@ animation-discharging-2 = 
 animation-discharging-foreground = ${colors.foreground-alt}
 animation-discharging-framerate = 750
 
+
 [module/cpu_temperature]
 type = internal/temperature
 thermal-zone = 1
@@ -331,7 +358,6 @@ ramp-0 = 
 ramp-1 = 
 ramp-2 = 
 ramp-foreground = ${colors.prefix}
-
 
 
 [module/gpu_temperature]
@@ -353,11 +379,10 @@ ramp-1 = 
 ramp-2 = 
 ramp-foreground = ${colors.prefix}
 
+
 [module/updates]
 type = custom/script
-
-exec = num=$(checkupdates | tee /tmp/updates | wc -l); ((num > 0)) && echo $num || echo ""
-label = %output%
+exec = num=$(checkupdates | tee /tmp/updates | wc -l); ((num > 0)) && echo $num
 # format-prefix = " "
 format-prefix = " "
 format-prefix-foreground = ${colors.prefix}
@@ -365,41 +390,50 @@ format-underline = ${colors.warning}
 tail = true
 interval = 300
 
-click-left = </tmp/updates cut -d" " -f1 | ~/.config/polybar/scripts/polyyad.py --nobuttons --text-info --no-buttons --close-on-unfocus --height 270 --width 230 &
+click-left = cut /tmp/updates -d" " -f1 | ~/.config/polybar/scripts/polyyadfile
+
 
 [module/gpu_usage]
 type = custom/script
-
 # TODO not working, but does in terminal?
 exec = sudo -n radeontop --dump - | rg 'gpu ([\d.]+)' -r '$1' -o
+tail = true
 label = %output%%
 format-prefix = " "
 format-prefix-foreground = ${colors.prefix}
 format-underline = ${colors.gpu}
-tail = true
+
 
 [module/cpu_load]
 type = custom/script
-
 exec = </proc/loadavg cut -f1 -d" "
-label = %output%
 format-underline = ${colors.cpu}
 interval = 5
 
 
 [module/compton]
 type = custom/script
-
-exec = pgrep -x compton >/dev/null && echo "" || echo "compton not running"
-label = %output%
+exec-if = ! pgrep -x compton
+exec = echo "compton not running"
 label-foreground = ${colors.foreground-alt}
 interval = 5
 
-[settings]
-screenchange-reload = true
 
-[global/wm]
-margin-top = 6
-margin-bottom = 5
+[module/wttr]
+type = custom/script
+exec = ~/.config/polybar/scripts/wttr.py "$_WTTR?format=%t+%c"
+interval = 300
+format-prefix = " "
+format-prefix-foreground = ${colors.prefix}
+click-left = feh "https://wttr.in/$_WTTR.png?F&lang=de" &
+
+
+[module/wttr_humidity]
+type = custom/script
+exec = curl -s "https://wttr.in/$_WTTR?format=%h"
+interval = 300
+format-prefix = " "
+format-prefix-foreground = ${colors.prefix}
+click-left = feh "https://wttr.in/$_WTTR.png?F&lang=de" &
 
 ; vim:ft=dosini
