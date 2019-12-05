@@ -45,6 +45,7 @@
 	],
 	"auto_complete_with_fields": true,
 	"auto_find_in_selection": true,
+	"clear_selection": false,
 	"color_scheme": "Packages/Theme - Nil/Tubnil.tmTheme",
 	"dictionary": "Packages/Language - English_user/en_US.dic",
 	"drag_text": true,
@@ -61,7 +62,8 @@
 		"node_modules",
 		".mypy_cache",
 		"*.egg-info",
-		".tox"
+		".tox",
+		".venv*"
 	],
 	"font_face": "Operator Mono",
 	"font_size": 12,

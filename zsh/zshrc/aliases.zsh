@@ -4,42 +4,39 @@ alias ipy='ipython'
 # alias sudo='killall screenkey 2>/dev/null; sudo'
 alias lrc='source ~/.zshrc'
 alias rm='rm -i'
-alias dragon="dragon-drag-and-drop"
+alias xen='xe -N0'
 
 # Needed when ssh-ing to servers without my terminal's terminfo (alacritty and termite)
 alias ssh="TERM=xterm-256color ssh"
 
-# ls: exa
+# File/dir listing
 alias ls='exa --time-style=long-iso'
 alias lst='exa --tree --level=3'
 alias exat='exa --tree --level=3'
 alias ols='command ls --color=auto'
 
-# alias la="ls -la ${ls_options:+${ls_options[*]}}"
-# alias ll="ls -l ${ls_options:+${ls_options[*]}}"
-# alias lh="ls -hAl ${ls_options:+${ls_options[*]}}"
-# alias l="ls -l ${ls_options:+${ls_options[*]}}"
+# All entries in table mode
 alias ll="exa -la"
 # All entries
-alias lsa='ls -a'
+alias lsa='exa -a'
 # Only show dot-files
-alias lsa='ls -a .*(.)'
+alias lsa='exa -a .*(.)'
 # Only show dot-directories
-alias lsad='ls -d .*(/)'
+alias lsad='exa -d .*(/)'
 # Only files with setgid/setuid/sticky flag
-alias lss='ls -l *(s,S,t)'
+alias lss='exa -l *(s,S,t)'
 # Only show symlinks
-alias lsl='ls -l *(@)'
+alias lsl='exa -l *(@)'
 # Display only executables
-alias lsx='ls -l *(*)'
+alias lsx='exa -l *(*)'
 # Display world-{readable,writable,executable} files
-alias lsw='ls -ld *(R,W,X.^ND/)'
+alias lsw='exa -ld *(R,W,X.^ND/)'
 # Display the ten biggest files
-alias lsbig="exa -lr --sort=size *(.OL[1,10])"
+alias lsbig='exa -lr --sort=size | head -n10'
 # Only show directories
-alias lsd='ls -d *(/)'
+alias lsd='exa -d *(/)'
 # Only show empty directories
-alias lsed='ls -d *(/^F)'
+alias lsed='exa -d *(/^F)'
 
 
 # Shorthands for directory navigation
@@ -196,10 +193,9 @@ cu () {
 }
 
 cu2 () {
-    # include updates for --devel packages (*-git)
-    # takes longer to run because all git repos need to be updated
+    # like cu but include updates for VCS packages
     checkupdates
-    # pacaur -k --devel --needed
+    echo ''
 
     # https://github.com/AladW/aurutils/issues/299#issuecomment-366807331
     # until a "native" flag is added: https://github.com/AladW/aurutils/pull/283
@@ -214,17 +210,12 @@ Syu () {
     # Check for special upgrade steps
     news="$(arch-news)"
     if [[ -n "$news" ]]; then
+        echo "$news"
         read -q "?continue? [y/n]" || return
     fi
-    # links "https://bbs.archlinux.org/viewforum.php?id=44"
 
     # the actual upgrade
     sudo pacman -Syu $@
-
-    # print remaining outdated packages
-    printf -- "\n"
-    aur repo -ld aur | aur vercmp
-    # cu
 }
 
 
