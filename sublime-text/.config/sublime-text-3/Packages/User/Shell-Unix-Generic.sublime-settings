@@ -2,6 +2,9 @@
 	"default_line_ending": "unix",
 	"extensions":
 	[
+		"sh",
+		"bash",
+		"zsh",
 		"PKGBUILD"
 	]
 }

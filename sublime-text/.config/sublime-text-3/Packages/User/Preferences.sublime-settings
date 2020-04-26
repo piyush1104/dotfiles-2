@@ -82,13 +82,9 @@
 	"highlight_modified_tabs": true,
 	"ignored_packages":
 	[
-		"InactivePanes",
 		"LSP",
-		"Open-Include",
 		"RestructuredText",
 		"Stylus",
-		"SublimeLinter-addon-filter",
-		"SublimeLinter-contrib-rustc",
 		"Table Editor",
 		"Theme - Freesia",
 		"UnitTesting",

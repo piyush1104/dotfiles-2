@@ -2,8 +2,10 @@
 	"extensions":
 	[
 		"url",
+		"service",
+		"ini.dist",
 		"conf",
-		"timer",
-		"service"
+		".npmrc",
+		"timer"
 	]
 }
