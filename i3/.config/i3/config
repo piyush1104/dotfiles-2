@@ -152,8 +152,7 @@ bindsym $mod+Shift+r restart
 bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
 
 # lock
-set $Locker i3lock-extra --screenshot --pixelize --tint black 10%
-bindsym $mod+Shift+Control+l exec $Locker
+set $Locker i3lock --tiling --image=$(i3lock-shot --pixelize --tint black 10%)
 
 set $mode_system System [l]ock, [e] logout, [s]uspend, [h]ibernate, [r]eboot, [S]hutdown
 mode "$mode_system" {
@@ -172,6 +171,7 @@ mode "$mode_system" {
 }
 
 bindsym $mod+Pause mode "$mode_system"
+bindsym $mod+Ctrl+Shift+p mode "$mode_system"
 
 # monitor management
 set $mode_monitor Monitor Management: [d]uplicate, [m]irror, extend [l]eft or [r]ight, [p]rimary or [s]econdary only; [P] to select primary
@@ -183,7 +183,7 @@ mode "$mode_monitor" {
     bindsym r $default_exec mons -e right
     bindsym p $default_exec mons -o
     bindsym s $default_exec mons -s
-    bindsym shift+p $default_exec mons-primary
+    bindsym Shift+p $default_exec mons-primary
     # back to normal
     bindsym Return mode "default"
     bindsym Escape mode "default"
@@ -237,12 +237,17 @@ bindsym --release button2 kill
 # $mod+middle mouse button toggles float
 bindsym --whole-window $mod+button2 floating toggle
 
-# volume
+# MEDIA KEYS #
+set $volume_sink 2
 set $volume_step 5%
-bindsym XF86AudioRaiseVolume exec --no-startup-id amixer set Master $volume_step+ && pkill -RTMIN+10 i3blocks
-bindsym XF86AudioLowerVolume exec --no-startup-id amixer set Master $volume_step- && pkill -RTMIN+10 i3blocks
-bindsym XF86AudioMute exec --no-startup-id amixer set Master toggle && pkill -RTMIN+10 i3blocks
-bindsym Ctrl+XF86AudioMute exec --no-startup-id "amixer set Headphone toggle; exec amixer set Front toggle"
+set $default_sink_input 2
+# volume control
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume $volume_sink +$volume_step
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume $volume_sink -$volume_step
+bindsym XF86AudioMute exec --no-startup-id amixer set Master toggle
+# switch between headphone and speaker output
+bindsym $mod+F1 exec --no-startup-id pactl move-sink-input $default_sink_input speakers
+bindsym $mod+F2 exec --no-startup-id pactl move-sink-input $default_sink_input headphones
 
 # media keys for mpd
 bindsym XF86AudioPrev exec --no-startup-id mpc prev
@@ -296,8 +301,8 @@ mode "$mode_focus" {
     bindsym t       [class="Thunderbird"] focus, $to_default
     bindsym z       [class="Zeal"] focus, $to_default
 
-    bindsym n       [class="Sublime_text" title="\\(notes\\) - Sublime Text$"] focus, $to_default
-    bindsym Shift+h [class="Sublime_text" title="\\(home\\) - Sublime Text$"] focus, $to_default
+    bindsym n       [class="Subl" title="^notes — .* - Sublime Text$"] focus, $to_default
+    bindsym Shift+h [class="Subl" title="^home — .* - Sublime Text$"] focus, $to_default
 
     bindsym Escape $to_default
     bindsym Return $to_default
@@ -360,7 +365,7 @@ mode "$mode_launcher" {
     bindsym r       exec i3-sensible-terminal -e ranger, $to_default
     bindsym s       exec subl, $to_default
     bindsym Shift+t exec telegram-desktop, $to_default
-    bindsym t       exec thunderbird, $to_default
+    bindsym t       exec env LC_TIME=lt_LT.UTF-8 thunderbird, $to_default
     # alacritty supports URLs but apparently not in the alt view?
     bindsym w       exec termite -e weechat, $to_default
     bindsym z       exec zeal, [class="Zeal"] focus, $to_default
@@ -389,3 +394,5 @@ exec --no-startup-id ~/.config/polybar/launch.sh
 # applications
 exec --no-startup-id parcellite
 exec --no-startup-id keepassxc
+exec --no-startup-id xbindkeys
+exec --no-startup-id nm-applet

@@ -1,11 +1,34 @@
 /* Don't embold greentext on hover (why in the fuck?) */
-[class*=message-] #GreenText:hover {
+[class*=container-] .green-text:hover {
     font-weight: normal !important;
 }
 
-/* prevent follow-up timestamps from being hidden (currently hardcoded for dark mode) */
-.theme-dark [class*=timestampVisibleOnHover-] {
-    color: hsla(0,0%,100%,.2);
+/* reduce padding in member list */
+[class*="scroller-"][class*="members-"] [class*="member-"] {
+    padding: 1px 0 !important;
+}
+[class*="members-"] [class*="member-"] > [ckass=*="layout-"] {
+    height: 39px;
+}
+
+/* hide stupid buttons */
+[class*="channelTextArea-"] button[tabindex="2"],
+[class*="channelTextArea-"] button[tabindex="3"]{
+    display:none;
+}
+
+/* Add hover underline */
+[class*=usernameWrapper-] [class*=username-]:hover {
+    border-bottom: 1px solid;
+}
+
+/* bigger jumboable emoji in compact */
+[class*="compact-"] [class*=messageContent] img.emoji.jumboable {
+    max-width: 32px;
+    max-height: 32px;
+    min-height: 1em;
+    width: auto;
+    height: auto;
 }
 
 /* Nox theme adjustments */
@@ -15,63 +38,22 @@
     --nox-level1: hsl(0, 0%, 17%);
 }
 
-[class*=attachButton-] {
-    width: 50px;
-}
-
-[class*=textArea-] {
-    padding: 16px 0 16px 50px !important;
-}
-
-[class*=usernameWrapper-] [class*=username-]:hover {
-    border-bottom: 1px solid;
-}
-
 [class*=containerCompact-][class*=container-][class*=isMentioned-] [class*=markup-],
 .containerCompact-3V0ioj.container-1YxwTf .isMentioned-N-h9aa .markup-2BOw-j {
     border-left-width: 2px;
 }
 
-/* TODO: check if the following can be removed */
+/* reduce content spacing */
 [class*=containerCompactBounded-] {
     padding: 0;
     margin: 0 !important;
-}
-
-/* Adjust divider size and backgrounds */
-[class*=divider-] {
-    height: 30px;
-}
-[class*=divider-] > span {
-    background: hsl(0, 0%, 25%) !important;
-}
-[class*=divider-][class*=dividerRed-] > span {
-    background: hsl(358, 22%, 30%) !important;
 }
 
 [class*=channels-] [class*=scrollerWrap-] {
     box-shadow: none;
 }
 
-/*[class*=container-] {*/
-/*.da-container {*/
 /* remove main container's backround so there aren't random holes */
 .container-1YxwTf {
     background: none;
-}
-
-/* reduce padding in member list */
-[class*="scroller-"][class*="members-"] [class*="member-"] {
-    padding: 1px 0 !important;
-}
-/* TODO update for radial status */
-[class*="members-"] [class*="member-"] > [ckass=*="layout-"] {
-    height: 39px;
-}
-
-
-/* hide stupid buttons */
-[class*="channelTextArea-"] button[tabindex="2"],
-[class*="channelTextArea-"] button[tabindex="3"]{
-    display:none;
 }

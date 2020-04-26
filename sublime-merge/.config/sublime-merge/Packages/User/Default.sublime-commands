@@ -1,0 +1,12 @@
+[
+    {
+        "caption": "Open Terminal",
+        "command": "git",
+        "args": { "argv": ["terminal"] }
+    },
+    {
+        "caption": "Start interactive rebase in terminal",
+        "command": "git",
+        "args": {"argv": ["rebase-terminal", "$commit"]}
+    },
+]

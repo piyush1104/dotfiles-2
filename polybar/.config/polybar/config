@@ -84,9 +84,9 @@ inherit = bar/base
 monitor = ${env:MONITOR:HDMI-A-0}
 # monitor = HDMI-A-0
 
-modules-left = i3 xwindow
+modules-left = i3 xwindow kernel
 modules-center = date wttr
-modules-right = picom updates filesystem memory cpu_usage cpu_load cpu_temperature eth pulseaudio
+modules-right = picom failed_units updates filesystem memory cpu_usage cpu_load cpu_temperature eth pulseaudio
 
 tray-position = right
 # tray-background = #0063ff
@@ -97,7 +97,7 @@ cursor-scroll = ns-resize
 
 [bar/secondary]
 inherit = bar/base
-monitor = ${env:MONITOR_2:DVI-I-1}
+monitor = ${env:MONITOR:DVI-I-1}
 
 modules-left = i3 xwindow
 modules-center = date
@@ -215,6 +215,7 @@ card = intel_backlight
 [module/cpu_usage]
 type = internal/cpu
 interval = 2
+
 format-prefix = " "
 format-prefix-foreground = ${colors.prefix}
 format-underline = #950095
@@ -224,6 +225,7 @@ label = %percentage:2%%
 [module/memory]
 type = internal/memory
 interval = 2
+
 format-prefix = " "
 format-prefix-foreground = ${colors.prefix}
 format-underline = ${colors.memory}
@@ -231,44 +233,48 @@ label = %percentage_used%%
 
 
 [module/wlan]
-# TODO
 type = internal/network
-interface = net1
+interface = wlp4s0
 interval = 5.0
 
-format-connected = <ramp-signal> <label-connected>
-label-connected = %essid% %{F#555}%{F-} %downspeed:8% %{F#555}%{F-} %upspeed:8%
+; format-connected = <ramp-signal> <label-connected>
+format-connected-prefix = " "
+format-connected-prefix-foreground = ${colors.prefix}
+format-connected = <label-connected>
+label-connected = %{F#555}%{F-} %downspeed:8% %{F#555}%{F-} %upspeed:8%
 format-connected-underline = ${colors.network}
 
-format-disconnected =
-;format-disconnected = <label-disconnected>
+format-disconnected-prefix = " "
+format-disconnected-prefix-foreground = ${colors.prefix}
+format-disconnected = <label-disconnected>
 format-disconnected-underline = ${colors.warning}
-;label-disconnected = %ifname% disconnected
-;label-disconnected-foreground = ${colors.foreground-alt}
-ramp-signal-0 = 
-ramp-signal-1 = 
-ramp-signal-2 = 
-ramp-signal-3 = 
-ramp-signal-4 = 
-ramp-signal-foreground = ${colors.foreground-alt}
+label-disconnected = N/A
+; %ifname%
+label-disconnected-foreground = ${colors.foreground-alt}
+
+# ramp provided by nm-applet
+; ramp-signal-0 = 
+; ramp-signal-4 = 
+; ramp-signal-foreground = ${colors.foreground-alt}
 
 
 [module/eth]
 type = internal/network
-interface = eno1
+interface = enp0s31f6
 interval = 5.0
 
-# format-connected-underline = #55aa55
 format-connected-prefix = " "
 format-connected-prefix-foreground = ${colors.prefix}
-label-connected = %local_ip% %{F#555}%{F-} %downspeed:8% %{F#555}%{F-} %upspeed:8%
+# label-connected = %local_ip%
+# TODO show IP info on click?
+label-connected = %{F#555}%{F-} %downspeed:8% %{F#555}%{F-} %upspeed:8%
 format-connected-underline = ${colors.network}
 
-format-disconnected = <label-disconnected>
-format-disconnected-underline = ${colors.warning}
 format-disconnected-prefix = " "
 format-disconnected-prefix-foreground = ${colors.prefix}
-label-disconnected = %ifname%
+format-disconnected = <label-disconnected>
+format-disconnected-underline = ${colors.warning}
+label-disconnected = N/A
 label-disconnected-foreground = ${colors.foreground-alt}
 
 
@@ -276,16 +282,18 @@ label-disconnected-foreground = ${colors.foreground-alt}
 type = custom/script
 exec = date +"%Y-%m-%d %H:%M:%S"
 interval = 1
+click-left = ~/.config/polybar/scripts/polyyad.py --calendar --undecorated --fixed --close-on-unfocus --no-buttons --width=250 &
+
 label = %output%
 format-prefix = " "
 format-prefix-foreground = ${colors.prefix}
 # format-underline = ${colors.secondary}
 
-click-left = ~/.config/polybar/scripts/polyyad.py --calendar --undecorated --fixed --close-on-unfocus --no-buttons --width=250 &
 
 
 [module/pulseaudio]
 type = internal/pulseaudio
+sink = headphones
 
 format-volume = <ramp-volume> <label-volume>
 label-volume = %percentage%%
@@ -383,14 +391,14 @@ ramp-foreground = ${colors.prefix}
 [module/updates]
 type = custom/script
 exec = num=$(checkupdates | tee /tmp/updates | wc -l); ((num > 0)) && echo $num
+interval = 300
+click-left = cut /tmp/updates -d" " -f1 | ~/.config/polybar/scripts/polyyadfile
+
 # format-prefix = " "
 format-prefix = " "
 format-prefix-foreground = ${colors.prefix}
 format-underline = ${colors.warning}
-tail = true
-interval = 300
 
-click-left = cut /tmp/updates -d" " -f1 | ~/.config/polybar/scripts/polyyadfile
 
 
 [module/gpu_usage]
@@ -398,6 +406,7 @@ type = custom/script
 # TODO not working, but does in terminal?
 exec = sudo -n radeontop --dump - | rg 'gpu ([\d.]+)' -r '$1' -o
 tail = true
+
 label = %output%%
 format-prefix = " "
 format-prefix-foreground = ${colors.prefix}
@@ -407,25 +416,28 @@ format-underline = ${colors.gpu}
 [module/cpu_load]
 type = custom/script
 exec = </proc/loadavg cut -f1 -d" "
-format-underline = ${colors.cpu}
 interval = 5
+
+format-underline = ${colors.cpu}
 
 
 [module/picom]
 type = custom/script
 exec-if = ! pgrep -x picom
 exec = echo "picom not running"
-label-foreground = ${colors.foreground-alt}
 interval = 5
+
+label-foreground = ${colors.foreground-alt}
 
 
 [module/wttr]
 type = custom/script
 exec = ~/.config/polybar/scripts/wttr.py "$_WTTR?format=%t+%c"
 interval = 300
+click-left = feh "https://wttr.in/$_WTTR.png?F&lang=de" &
+
 format-prefix = " "
 format-prefix-foreground = ${colors.prefix}
-click-left = feh "https://wttr.in/$_WTTR.png?F&lang=de" &
 
 
 [module/wttr_humidity]
@@ -436,4 +448,22 @@ format-prefix = " "
 format-prefix-foreground = ${colors.prefix}
 click-left = feh "https://wttr.in/$_WTTR.png?F&lang=de" &
 
-; vim:ft=dosini
+
+[module/failed_units]
+type = custom/script
+exec = ~/.config/polybar/scripts/systemd-units count
+interval = 60
+click-left = ~/.config/polybar/scripts/systemd-units print | ~/.config/polybar/scripts/polyyadfile
+
+format-prefix = " "
+format-prefix-foreground = ${colors.prefix}
+format-underline = ${colors.alert}
+
+
+[module/kernel]
+type = custom/script
+exec-if = [ $(pacman -Q linux | cut -d" " -f2 | tr - .) != $(uname -r | tr - .) ]
+exec = echo "kernel mismatch"
+interval = 600
+
+label-foreground = ${colors.foreground-alt}

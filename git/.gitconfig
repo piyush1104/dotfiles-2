@@ -8,12 +8,16 @@
 
 [alias]
 	lg = log --graph --oneline --decorate
+	caa = commit -a --amend -C HEAD
+	new = !sh -c 'git log $1@{1}..$1@{0} "$@"'
+	terminal = !i3-sensible-terminal "$@" &
+	rebase-terminal = !GIT_EDITOR=$EDITOR i3-sensible-terminal --hold -e zsh -c \"git rebase -i $1\"
 
 	; https://gist.github.com/gnarf/5406589
 	prr = "!f() { git fetch -fu $1 refs/pull/$2/head:pr/$2; } ; f"
 	pr = "!f() { git prr origin $1; } ; f"
 	pru = "!f() { git prr upstream $1; } ; f"
-	pr-clean = "!git for-each-ref refs/heads/pr/* --format='%(refname)' | while read ref ; do branch=${ref#refs/heads/} ; git branch -D $branch ; done"
+	pr-clean = "!git for-each-ref refs/heads/pr/* --format='%(refname)' | while read ref ; do git branch -D ${ref#refs/heads/} ; done"
 
 [branch]
 	autosetuprebase = always
@@ -28,14 +32,18 @@
 	rebase = true
 
 [merge]
-	conflictstyle = diff3
+	conflictStyle = diff3
 	tool = smerge
+
 [core]
 	excludesfile = /home/fichte/.gitignore_global
+
 [rebase]
 	autoSquash = true
+
 [log]
 	follow = true
+
 [mergetool "smerge"]
 	cmd = smerge --wait mergetool \"$BASE\" \"$LOCAL\" \"$REMOTE\" -o \"$MERGED\"
 	trustExitCode = true
