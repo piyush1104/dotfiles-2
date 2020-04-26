@@ -11,7 +11,7 @@ font:
   # * file:///usr/share/doc/fontconfig/fontconfig-user.html
   normal:
     family: xos4 Terminus
-  size: 10
+  size: 8
 
 # Colors (Tomorrow Night Bright, modified)
 colors:
