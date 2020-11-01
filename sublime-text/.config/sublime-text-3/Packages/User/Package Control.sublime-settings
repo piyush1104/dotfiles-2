@@ -23,6 +23,7 @@
 		"Chain of Command",
 		"ColorHelper",
 		"DocBlockr",
+		"Dockerfile Syntax Highlighting",
 		"Edit Preferences",
 		"File History",
 		"FileIcons",
@@ -30,6 +31,7 @@
 		"INI",
 		"Insert Nums",
 		"InsertDate",
+		"Kotlin",
 		"LaTeX-cwl",
 		"LaTeXTools",
 		"LSP",
@@ -79,10 +81,10 @@
 		"Vue Syntax Highlight",
 		"Wrap Plus",
 		"YAMLMacros",
-		"Zeal"
+		"Zeal",
 	],
 	"repositories":
 	[
 		"https://packagecontrol.io/prerelease/packages.json"
-	]
+	],
 }

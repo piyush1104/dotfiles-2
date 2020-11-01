@@ -4,8 +4,6 @@
   { "keys": ["ctrl+."], "command": "show_overlay", "args": {"overlay": "goto", "text": "#"} },
   //["ctrl+`"] -> ctrl+ö
   { "keys": ["f8"], "command": "show_panel", "args": {"panel": "console", "toggle": true} },
-  // ["ctrl+g"]
-  // { "keys": ["ctrl+."], "command": "show_overlay", "args": {"overlay": "goto", "text": ":"} },
 
   // ["ctrl+shift+k"]
   { "keys": ["alt+d"], "command": "run_macro_file",
@@ -19,12 +17,20 @@
   { "keys": ["shift+f7"], "command": "build", "args": {"variant": "Run"} },
 
   // ctrl+tab overrides
-  { "keys": ["ctrl+tab"], "command": "next_view" },
-  { "keys": ["ctrl+shift+tab"], "command": "prev_view" },
+  // { "keys": ["ctrl+tab"], "command": "next_view" },
+  // { "keys": ["ctrl+shift+tab"], "command": "prev_view" },
 
   // SciTE's 'KP_-' behaviour || previously "ctrl+/" and "ctrl+shift+/" (-> "#" key)
   { "keys": ["keypad_minus"], "command": "toggle_comment", "args": { "block": false } },
   { "keys": ["ctrl+shift+keypad_minus"], "command": "toggle_comment", "args": { "block": true } },
+
+  // Diff hunks
+  { "keys": ["ctrl+k", "ctrl+altgr+s"], "command": "toggle_inline_diff" },
+
+  // Make keypad keys work for font size changes
+  { "keys": ["ctrl+keypad_plus"],  "command": "increase_font_size" },
+  { "keys": ["ctrl+keypad_minus"], "command": "decrease_font_size" },
+
 
   // allow [] to trigger "Add Line in Braces.sublime-macro" (mainly for json)
   { "keys": ["enter"], "command": "run_macro_file",
@@ -47,7 +53,6 @@
     ]
   },
 
-
   // Word wrapping
   { "keys": ["ctrl+shift+w"], "command": "toggle_setting", "args": {"setting": "word_wrap"} },
 
@@ -61,7 +66,7 @@
   { "keys": ["ctrl+k", "ctrl+u"], "command": "unfold" },
 
   // 3-pane layout with single bottom group
-  { 
+  {
     "keys": ["alt+shift+4"],
     "command": "set_layout",
     "args":
@@ -247,7 +252,7 @@
   { "keys": ["alt+f", "s"], "command": "selection_fields", "args": {"mode": "subtract"} },
   { "keys": ["alt+s", "p"], "command": "remove_empty_regions" }, // prune
   { "keys": ["alt+s", "S"], "command": "strip_selection" },
-  { "keys": ["alt+s", "n"], "command": "normalize_region_ends" },
+  { "keys": ["alt+s", "r"], "command": "normalize_region_ends" },
   { "keys": ["alt+s", "s"], "command": "split_selection" },
   // JumpTo (fork)
   { "keys": ["alt+s", "j"], "command": "jump_to_interactive" },

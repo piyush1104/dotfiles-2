@@ -1,11 +1,11 @@
 {
 	"extensions":
 	[
-		"url",
-		"service",
 		"ini.dist",
-		"conf",
+		"timer",
 		".npmrc",
-		"timer"
-	]
+		"service",
+		"conf",
+		"url",
+	],
 }

@@ -7,12 +7,26 @@
 	gpgSign = true
 
 [alias]
-	lg = log --graph --oneline --decorate
-	caa = commit -a --amend -C HEAD
-	new = !sh -c 'git log $1@{1}..$1@{0} "$@"'
-	terminal = !i3-sensible-terminal "$@" &
-	rebase-terminal = !GIT_EDITOR=$EDITOR i3-sensible-terminal --hold -e zsh -c \"git rebase -i $1\"
+	b = branch
+	c = commit
+	co = checkout
+	d = diff
+	ds = diff --staged
+	r = reset
+	rb = rebase
+	rba = rebase --abort
+	s = status -s
 
+	lg = log --graph --oneline --decorate
+	ll = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --numstat
+	ld  = !f() { git show "$1"; git diff "$1"^.."$1";  }; f
+	caa = commit -a --amend -C HEAD
+	can = commit --amend --no-edit
+	new = !sh -c 'git log $1@{1}..$1@{0} "$@"'
+	terminal = !i3-sensible-terminal "$@" & disown
+	rebase-terminal = !GIT_EDITOR=$EDITOR i3-sensible-terminal --hold -e $SHELL -c \"git rebase -i $1\" & disown
+
+	; Pull request management
 	; https://gist.github.com/gnarf/5406589
 	prr = "!f() { git fetch -fu $1 refs/pull/$2/head:pr/$2; } ; f"
 	pr = "!f() { git prr origin $1; } ; f"
@@ -47,3 +61,20 @@
 [mergetool "smerge"]
 	cmd = smerge --wait mergetool \"$BASE\" \"$LOCAL\" \"$REMOTE\" -o \"$MERGED\"
 	trustExitCode = true
+
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+
+[core]
+	pager = delta
+
+[delta]
+	line-numbers = true
+	minus-style = syntax auto
+    # side-by-side = true
+
+[interactive]
+	diffFilter = delta --color-only

@@ -1,0 +1,96 @@
+/* Show title of unread tabs with red and italic font */
+/*
+tab-item.unread .label-content {
+  color: red !important;
+  font-style: italic !important;
+}
+*/
+
+/* Add private browsing indicator per tab */
+.tab.private-browsing .label:before {
+  content: "🕶";
+}
+
+/* Only show close button on hover, and tint red */
+#tabbar tab-item:not(:hover):not(.active) tab-closebox {
+  display: none;
+}
+tab-item tab-closebox:hover::before,
+tab-item.active tab-closebox:hover::before {
+  background: hsla(0, 70%, 60%);
+  opacity: 0.8; /* defaults to 0.1 */
+}
+
+/* Dim unloaded tabs */
+tab-item.discarded .label-content {
+   opacity: 0.65;
+}
+
+/* Add margin around favicon */
+tab-item .favicon {
+  margin-left: .2em;
+  margin-right: .2em;
+}
+
+/* Tab counts (use with <number>gt via vimium-ff) */
+#tabbar {
+  counter-reset: vtabs atabs tabs;
+  /* vtabs tracks visible tabs, atabs tracks active tabs, tabs tracks all tabs */
+}
+tab-item:not(.collapsed):not(.discarded) {
+  counter-increment: vtabs atabs tabs;
+}
+tab-item:not(.collapsed) {
+  counter-increment: vtabs tabs;
+}
+tab-item:not(.discarded) {
+  counter-increment: atabs tabs;
+}
+tab-item {
+  counter-increment: tabs;
+}
+tab-item .extra-items-container.behind::after {
+  color: hsla(0, 0%, 100%, 0.65);
+  content: counter(tabs);
+  font-size: xx-small;
+  right: 0.2em;
+  padding: 0.2em;
+  pointer-events: none;
+  position: absolute;
+  bottom: 0.2em;
+  z-index: 1000;
+}
+.newtab-button::after {
+  content: var(--tab-count-text);
+  font-size: small;
+  pointer-events: none;
+    
+  position: absolute;
+  left: 0.5em;
+
+  /* TST 2.4.0 - Fix for Issue #1664 */
+  background: transparent !important;
+  mask: none !important;
+}
+.newtab-button:hover {
+  --tab-count-text: counter(atabs) "/" counter(tabs) " tabs";
+}
+
+/* Apply gtk theme colors */
+#background {
+  /* idk how to get this color (used in gtk window titles) */
+  background-color: #2C2F3B;
+}
+
+/* removed with https://github.com/piroor/treestyletab/commit/d3d39e05432f644c6e0ed46e0a6b214f3a9360cb; variables renamed later */
+:root {
+  --tabbar-bg: #2C2F3B;
+  --tab-surface-regular: -moz-Dialog;
+  /*--tab-surface-active: -moz-CellHighlight;*/
+  --tab-text-regular: -moz-DialogText;
+  --tab-border: ThreeDShadow;
+  --tab-side-border: ThreeDLightShadow;
+  --tab-surface-hover: -moz-ButtonHoverFace;
+  --tab-dropmarker: -moz-DialogText;
+}
+

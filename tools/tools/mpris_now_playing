@@ -1,31 +1,44 @@
 #!/usr/bin/env python
+"""Write currently playing song artist and title into a file.
+
+Useful for stream setups like OBS.
+"""
 
 import os
 import subprocess
 import time
 
-SEP = "\uFFEF"
 PATH = "/tmp/now_playing.txt"
+POLL_INTERVAL = 5  # in seconds
 
 
 def main():
-    last_playing = ""
+    last_playing = None
     while True:
         now_playing = get_now_playing_str()
         if last_playing != now_playing:
+            print("playing:", now_playing)
             with open(PATH, "w", encoding='utf-8') as fp:
-                print("playing:", now_playing)
                 fp.write(now_playing if now_playing else "")
             last_playing = now_playing
 
-        time.sleep(1)
+        time.sleep(POLL_INTERVAL)
 
 
 def playerctl(*args, player=None, all=False):
     if player:
         args = [f"--player={player}", *args]
-    result = subprocess.check_output(["playerctl", *args], encoding="utf-8").strip()
-    return result if not all else result.split()
+    elif all:
+        args = ["--all-players", *args]
+    proc = subprocess.run(["playerctl", *args], capture_output=True, text=True)
+    if proc.stderr == "No player could handle this command\n":
+        return None
+    elif proc.returncode:
+        print(f"Non-zero returncode from playerctl ({proc.returncode}:")
+        print(proc.stderr)
+        return None
+    else:
+        return proc.stdout if not all else proc.stdout.splitlines()
 
 
 def list_players():
@@ -36,17 +49,19 @@ def get_now_playing_str():
     players = list_players()
     statuses = playerctl('status', all=True)
 
-    try:
-        player = players[statuses.index('Playing')]
-    except ValueError:
-        return
+    if 'Playing' not in statuses:
+        return None
+    i = statuses.index('Playing')
+    player = players[i]
 
-    artist = playerctl("metadata", "xesam:artist", player=player)
     title = playerctl("metadata", "xesam:title", player=player)
+    artist = playerctl("metadata", "xesam:artist", player=player)
     if artist:
         return f"{artist} - {title}"
-    else:
+    elif title:
         return title
+    else:
+        return None
 
 
 if __name__ == '__main__':

@@ -33,18 +33,19 @@
 	"auto_complete_cycle": true,
 	"auto_complete_preserve_order": "none",
 	"auto_complete_selector": "source - comment - string, meta.tag - punctuation.definition.tag.begin",
+	"auto_complete_trailing_spaces": false,
 	"auto_complete_triggers":
 	[
 		{
 			"characters": "<",
-			"selector": "text.html - text.html source"
+			"selector": "text.html - text.html source",
 		},
 		{
-			"selector": "punctuation.accessor"
+			"selector": "punctuation.accessor",
 		},
 		{
 			"characters": "\\",
-			"selector": "text.tex.latex"
+			"selector": "text.tex.latex",
 		}
 	],
 	"auto_complete_with_fields": true,
@@ -57,8 +58,10 @@
 	"drag_text": true,
 	"draw_white_space":
 	[
+		"isolated",
+		"all_mixed",
 		"selection",
-		"trailing"
+		"trailing",
 	],
 	"ensure_newline_at_eof_on_save": true,
 	"fade_fold_buttons": false,
@@ -74,7 +77,8 @@
 		".mypy_cache",
 		"*.egg-info",
 		".tox",
-		".venv*"
+		".venv*",
+		".pytest_cache"
 	],
 	"font_face": "Operator Mono",
 	"font_size": 12,
@@ -88,9 +92,8 @@
 		"Table Editor",
 		"Theme - Freesia",
 		"UnitTesting",
-		"Vintage"
+		"Vintage",
 	],
-	"inactive_panes_dim_strength": 0.12,
 	"indent_guide_options":
 	[
 		"draw_normal",
@@ -113,6 +116,10 @@
 	"theme": "Nil.sublime-theme",
 	"translate_tabs_to_spaces": true,
 	"trim_automatic_white_space": false,
+	"trim_only_modified_white_space": false,
 	"trim_trailing_white_space_on_save": true,
-	"word_separators": " ./\\()\"'-:,.;<>~!@#$%^&*|+=[]{}`~?"
+	"word_separators": " ./\\()\"'-:,.;<>~!@#$%^&*|+=[]{}`~?",
+	// Default without `markup.raw`
+	"spelling_selector": "source string.quoted - punctuation - meta.preprocessor.include, source comment - source comment.block.preprocessor, -(source, constant, keyword, storage, support, variable, markup.underline.link, meta.tag)",
+	"scroll_context_lines": 4,
 }

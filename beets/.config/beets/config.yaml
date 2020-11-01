@@ -11,38 +11,39 @@ import:
   # autotag: false
   log: beetslog.txt
 
-# custom album fields:
+# Custom album fields:
 #   - source: (for albumtype:soundtrack)
 #     The name of the source for the soundtrack,
 #     e.g. the source of "Transistor Soundtrack" is "Transistor".
+#
 #   - sourcetype: (for albumtype:soundtrack)
 #     Type of the source.
 #     One out of "game", "movie", "anime".
 #     `beet list -af '%ifdef{sourcetype}' | sort -u`
+#
 #   - touhou:true
 #     If it is a Touhou arrangement (disc).
+#
 #   - doujin:true
 #     Released by a doujin circle (usually at some event).
+#
 #   - event:
 #     Event at which the doujin CD was released,
 #     e.g. "M3-41", "C-83", "Reitatsei-7".
 #     Refer to https://vgmdb.net/db/events.php for a reference list.
 #     `beet list -af '%ifdef{event}' | sort -u`
 #
-# custom track fields:
+# Custom track fields:
 #   - anime:
-#     For singles in the context of anime releases.
-#     Can be set to "Opening", "Ending", "Insert", etc.
+#     For songs in the context of anime releases.
+#     Can be set to "Opening (n)", "Ending (n)", "Insert".
+#
+#   - source: (for anime:)
+#     The name of the anime the song appeared in.
 
 # https://beets.readthedocs.io/en/stable/reference/pathformat.html
 paths:
   # special stuff
-  # TODO remove this
-  sourcetype:anime:
-    "#soundtrack\
-    /%ifdef{source,$source/}\
-    $album%aunique{}%ifdef{anime, [$anime]}\
-    /$disc_and_track - $maybe_artist$title"
   doujin:true:
     "#%ifdef{touhou,touhou,doujin}\
     /$albumartist_or_label\
@@ -69,37 +70,54 @@ item_fields:
     else f"{track:0{max(2, len(str(tracktotal)))}}"
   maybe_artist: f"{artist} - " if artist != albumartist else ""
 
+########################################
+
 # TODO check out mpd-focused plugins like mpdstats
 # https://beets.readthedocs.io/en/latest/plugins/index.html
 plugins: >-
   duplicates
+  extrafiles
   fetchart
+  info
   inline
   lastgenre
   missing
+  play
   playlist
   replaygain
   smartplaylist
 # embedart convert
 # plugins: inline  # for testing album fallback
 
+extrafiles:
+  patterns:
+    scans: ['[sS]cans/', '[sS]can/']
+    misc: ['*.log', '*.nfo', '*.jpg', '*.jpeg', '*.png', '*.webp']
+  paths:
+    scans: $albumpath/Scans
+    misc: $albumpath/$basename
+
 lastgenre:
   count: 1
-  # separator: "\x00"  # multi-field ID3v2.4 text tags are separated by nulls - http://id3.org/id3v2.4.0-frames section 4.2 | doesn't seem to work out that well?
+  # Multi-field ID3v2.4 text tags are separated by nulls,
+  # but doesn't seem to work out well
+  # ref: http://id3.org/id3v2.4.0-frames section 4.2
+  # separator: "\x00"
+
+play:
+  command: mpv
 
 playlist:
   auto: true
   playlist_dir: ~/.mpd/playlists
+
+replaygain:
+  backend: gstreamer
 
 smartplaylist:
   playlist_dir: ~/.mpd/playlists
   playlists:
     - name: $Recently Added.m3u
       query: 'added:-4w.. albumartist+ year+ album+ disc+ track+'
-    - name: $Anime Openings.m3u
-      query: 'sourcetype:anime anime:Opening source+ anime+'
-    - name: $Anime Endings.m3u
-      query: 'sourcetype:anime anime:Ending source+ anime+'
-
-replaygain:
-  backend: gstreamer
+    - name: $Anime OPED.m3u
+      query: 'anime:Opening , anime:Ending source+ anime+'

@@ -82,7 +82,7 @@ font-6 = M+ 2m:size=10;2
 
 [bar/primary]
 inherit = bar/base
-monitor = ${env:MONITOR:HDMI-A-0}
+monitor = ${env:POLY_MONITOR:HDMI-A-0}
 # monitor = HDMI-A-0
 
 modules-left = i3 xwindow kernel
@@ -98,7 +98,7 @@ cursor-scroll = ns-resize
 
 [bar/secondary]
 inherit = bar/base
-monitor = ${env:MONITOR:DVI-I-1}
+monitor = ${env:POLY_MONITOR:DVI-I-1}
 
 modules-left = i3 xwindow
 modules-center = date
@@ -235,7 +235,7 @@ label = %percentage_used%%
 
 [module/wlan]
 type = internal/network
-interface = wlp4s0
+interface = ${env:POLY_WLAN:wlp4s0}
 interval = 5.0
 
 ; format-connected = <ramp-signal> <label-connected>
@@ -261,7 +261,7 @@ label-disconnected-foreground = ${colors.foreground-alt}
 
 [module/eth]
 type = internal/network
-interface = enp0s31f6
+interface = ${env:POLY_ETH:eno1}
 interval = 5.0
 
 format-connected-prefix = " "
@@ -280,6 +280,7 @@ label-disconnected-foreground = ${colors.foreground-alt}
 
 
 [module/date]
+# can't use internal/date because of custom click-left script
 type = custom/script
 exec = date +"%Y-%m-%d %H:%M:%S"
 interval = 1
@@ -288,7 +289,6 @@ click-left = ~/.config/polybar/scripts/polyyad.py --calendar --undecorated --fix
 label = %output%
 format-prefix = " "
 format-prefix-foreground = ${colors.prefix}
-# format-underline = ${colors.secondary}
 
 
 
@@ -313,6 +313,8 @@ ramp-volume-foreground = ${colors.foreground-alt}
 # ramp-volume-1 = 🔉
 # ramp-volume-2 = 🔊
 
+click-right = pavucontrol &
+
 
 [module/battery]
 type = internal/battery
@@ -324,11 +326,11 @@ format-charging = <animation-charging> <label-charging>
 format-charging-underline = ${colors.good}
 
 format-discharging = <ramp-capacity> <label-discharging>
-format-discharging-underline = ${colors.warning}
+format-discharging-underline = ${colors.secondary}
 
 format-full-prefix = 
 format-full-prefix-foreground = ${colors.prefix}
-format-full-underline = ${colors.secondary}
+; format-full-underline = ${colors.secondary}
 
 ramp-capacity-0 = 
 ramp-capacity-1 = 
@@ -408,9 +410,10 @@ format-underline = ${colors.warning}
 
 [module/gpu_usage]
 type = custom/script
-# TODO not working, but does in terminal?
-exec = sudo -n radeontop --dump - | rg 'gpu ([\d.]+)' -r '$1' -o
-tail = true
+exec = sudo -n radeontop --dump - -l1 | rg 'gpu ([\d.]+)' -r '$1' -o
+# TODO tailing doesn't work for some reason (remove -l1 for that)
+# tail = true
+interval = 5
 
 label = %output%%
 format-prefix = " "
