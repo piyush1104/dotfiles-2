@@ -1,0 +1,132 @@
+#!/usr/bin/env python
+#
+# Requires: playerctl, more-itertools (pypi)
+
+import argparse
+import operator
+from subprocess import CalledProcessError, check_output
+import sys
+from typing import Iterable, Generator, NamedTuple
+
+from more_itertools import partition
+
+SEP = "\uFFEF"
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("action",
+                        choices=['play', 'pause', 'playpause',
+                                 'next', 'previous', 'restart',
+                                 'debug'])
+    return parser.parse_args()
+
+
+def playerctl_info(fields: Iterable[str], player: str = None) -> Generator[str, None, None]:
+    args = ['metadata', '-f', SEP.join("{{%s}}" % f for f in fields)]
+    return playerctl(*args, player=player).split(SEP)
+
+
+def playerctl(*args: str, player: str = None, all: bool = False):
+    args_ = list(args)
+    if all:
+        args_.insert(0, "--all-players")
+    elif player:
+        args_.insert(0, f"--player={player}")
+    result = check_output(["playerctl", *args_], text=True).rstrip("\n")
+    return result if not all else result.split()
+
+
+class Player(NamedTuple):
+    identifier: str
+    name: str
+    playing: bool
+    artist: str
+    track: str
+
+    @classmethod
+    def list(cls) -> Generator['Player', None, None]:
+        for identifier in playerctl('--list-all').split():
+            fields = ["playerName", "status", "artist", "title"]
+            try:
+                name, status, artist, title = playerctl_info(fields, player=identifier)
+                yield Player(identifier, name, status == 'Playing', artist, title)
+            except CalledProcessError:
+                print("Couldn't get details for", identifier)
+                pass
+
+    def __str__(self) -> str:
+        return f"{self.name} | {f'{self.artist} - ' if self.artist else ''}{self.track}"
+
+    def command(self, *cmd: str) -> int:
+        cmd_ = list(cmd)
+        if cmd_ == ['playpause']:
+            cmd_ = ['pause' if self.playing else 'play']
+        return playerctl(*cmd_, player=self.identifier)
+
+
+def rofi_prompt(
+    prompt: str,
+    options: Iterable[str] = (),
+    *,
+    mesg: str = None,
+    default: str = None
+) -> str:
+    cmd = [
+        "rofi", "-dmenu",
+        "-i",
+        "-no-custom",
+        "-matching", "fuzzy",
+        "-p", prompt,
+    ]
+    if mesg:
+        cmd += ["-mesg", mesg]
+    if default:
+        cmd += ["-filter", default]
+
+    return check_output(cmd, text=True, input="\n".join(options)).rstrip("\n")
+
+
+def main(action: str) -> int:
+    all_players = Player.list()
+    inactive_players, active_players = \
+        map(list, partition(operator.attrgetter('playing'), all_players))
+
+    if action == "debug":
+        print("Active players:")
+        for p in active_players:
+            print(p)
+        print("\nInactive players:")
+        for p in inactive_players:
+            print(p)
+        return 0
+
+    for players in [active_players, inactive_players]:
+        if len(players) == 1:
+            player = players[0]
+        elif players:
+            options = {str(p): p for p in players}
+            option = rofi_prompt("Player", options.keys(), mesg=f"Action: {action}")
+            if not option:
+                return 0
+            player = options[option]
+        elif action == 'pause':
+            # no active player
+            return 0
+        else:
+            continue
+
+        if action == 'restart':
+            player.command("position", "0")
+            player.command("play")
+        else:
+            player.command(action)
+
+        return 0
+
+    print('No player found')
+    return 1
+
+
+if __name__ == '__main__':
+    sys.exit(main(**vars(parse_args())))
